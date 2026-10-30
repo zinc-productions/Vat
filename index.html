@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Vat V1.7</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">V</div>
+        <div>
+          <h1>Vat</h1>
+          <span id="status">Ready to chat</span>
+        </div>
+      </div>
+
+      <div class="version">V1.7</div>
+    </header>
+
+    <main id="chatMessages" class="chat-messages">
+      <div class="welcome">
+        <div class="welcome-icon">V</div>
+        <h2>Hello! I'm Vat.</h2>
+        <p>What would you like to talk about?</p>
+      </div>
+    </main>
+
+    <section class="bottom-panel">
+
+      <div class="usage">
+        <span id="usageText">15 / 15 messages remaining</span>
+        <span id="usageTimer">Hourly limit</span>
+      </div>
+
+      <div class="settings">
+
+        <label>
+          Response length
+          <select id="chatLength">
+            <option value="short">Short</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="detailed">Detailed</option>
+          </select>
+        </label>
+
+        <label>
+          Personality
+          <select id="personality">
+            <option value="friendly">Friendly</option>
+            <option value="professional">Professional</option>
+            <option value="funny">Funny</option>
+            <option value="calm">Calm</option>
+          </select>
+        </label>
+
+        <label>
+          Nickname
+          <input
+            id="nickname"
+            type="text"
+            maxlength="40"
+            placeholder="Optional"
+          >
+        </label>
+
+      </div>
+
+      <form id="chatForm">
+        <textarea
+          id="messageInput"
+          maxlength="4000"
+          rows="2"
+          placeholder="Message Vat..."
+          required
+        ></textarea>
+
+        <button id="sendButton" type="submit">
+          Send
+        </button>
+      </form>
+
+      <div class="footer">
+        <span>Vat V1.7 · Powered by Groq</span>
+        <button id="clearChat" type="button">New chat</button>
+      </div>
+
+    </section>
+
+  </div>
+</body>
+</html>
