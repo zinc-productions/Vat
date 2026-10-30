@@ -130,6 +130,7 @@ function loadUsage() {
     ).sort((a, b) => a - b);
 
   } catch (error) {
+    console.error("Vat usage storage error:", error);
     return [];
   }
 }
@@ -141,7 +142,7 @@ function saveUsage(timestamps) {
       JSON.stringify(timestamps)
     );
   } catch (error) {
-    console.error("Vat could not save usage:", error);
+    console.error("Could not save Vat usage:", error);
   }
 }
 
@@ -164,7 +165,7 @@ function updateUsage() {
     remaining + " / " + VAT_MESSAGE_LIMIT +
     " messages remaining";
 
-  if (timestamps.length) {
+  if (timestamps.length > 0) {
     const resetIn =
       timestamps[0] + VAT_WINDOW_MS - Date.now();
 
@@ -203,9 +204,7 @@ function recordMessage() {
 async function askVat(message) {
   const payload = {
     message: message,
-
     history: conversationHistory.slice(-10),
-
     settings: getSettings()
   };
 
@@ -225,13 +224,16 @@ async function askVat(message) {
     });
 
   } catch (error) {
-    if (error.name === "TimeoutError") {
+    if (
+      error.name === "TimeoutError" ||
+      error.name === "AbortError"
+    ) {
       throw new Error("Vat took too long to respond.");
     }
 
     throw new Error(
       "Could not connect to Vat's Cloudflare Worker. " +
-      "Check the Worker and its CORS settings."
+      "Check the Worker URL and CORS settings."
     );
   }
 
@@ -249,12 +251,13 @@ async function askVat(message) {
 
   if (!response.ok) {
     throw new Error(
-      result.error || result.message ||
+      result.details ||
+      result.error ||
+      result.message ||
       "Worker returned HTTP " + response.status
     );
   }
 
-  // Accept a few common response formats.
   const answer =
     result.answer ||
     result.response ||
@@ -339,7 +342,7 @@ async function sendMessage() {
 
     addMessage(
       "assistant",
-      error.message,
+      error.message || "Something went wrong.",
       "error"
     );
 
@@ -367,7 +370,7 @@ function newChat() {
 }
 
 // ==========================================
-// EVENTS
+// EVENT LISTENERS
 // ==========================================
 
 chatForm.addEventListener("submit", event => {
@@ -402,13 +405,13 @@ clearChatButton.addEventListener("click", newChat);
 function initializeVat() {
   document.title = "Vat " + VAT_VERSION;
 
-  updateUsage();
-  showWelcome();
+  statusElement.textContent = "Ready to chat";
 
+  updateUsage();
   setInterval(updateUsage, 1000);
 
   console.log("Vat " + VAT_VERSION + " initialized.");
-  console.log("Cloudflare Worker:", VAT_WORKER_URL);
+  console.log("Worker:", VAT_WORKER_URL);
 }
 
 initializeVat();
